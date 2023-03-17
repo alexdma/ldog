@@ -7,5 +7,6 @@ edition = "2021"
 
 [dependencies]
 gemini = "0.0.5"
+log = "0.4.17"
 
 rand = "0.8.3"

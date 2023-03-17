@@ -2,6 +2,7 @@ use std::cmp::Ordering;
 
 use gemini::gemtext::Builder;
 use gemini::request::{Gemini, Request};
+use log::{info};
 
 fn triple(s: String, p: String, o: String) {
     (s, p, o);
@@ -14,8 +15,13 @@ fn client(uri: &str) {
 
 fn main() {
     println!("Welcome to my Rust project bringing Linked Data over to the Small Web!");
+    
+    const GEMURL : &str = "gemini://gemini.circumlunar.space";
+    
+    // Won't work until I configure a logger.
+    info!("First let's build a Request to {}", GEMURL);
 
-    client("gemini://gemini.circumlunar.space");
+    client(GEMURL);
 
     let rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
