@@ -2,7 +2,10 @@ use std::cmp::Ordering;
 
 use gemini::gemtext::Builder;
 use gemini::request::{Gemini, Request};
-use log::{info};
+use log::info;
+
+const NS_FOAF: &str = "http://xmlns.com/foaf/0.1/";
+const NS_RDF: &str = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
 fn triple(s: String, p: String, o: String) {
     (s, p, o);
@@ -15,21 +18,19 @@ fn client(uri: &str) {
 
 fn main() {
     println!("Welcome to my Rust project bringing Linked Data over to the Small Web!");
-    
-    const GEMURL : &str = "gemini://gemini.circumlunar.space";
-    
+
+    const GEMURL: &str = "gemini://gemini.circumlunar.space";
+
     // Won't work until I configure a logger.
     info!("First let's build a Request to {}", GEMURL);
 
     client(GEMURL);
 
-    let rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-
-    let rdftype = format!("{}type", rdf);
+    let rdftype = format!("{}type", NS_RDF);
 
     let s = "https://orcid.org/0000-0002-9272-908X";
     let p = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-    let o = "http://xmlns.com/foaf/0.1/Person";
+    let o = NS_FOAF.to_owned() + "Person";
 
     match p.cmp(&rdftype) {
         Ordering::Less => println!("[FAILURE] Not an rdf:type"),
@@ -38,12 +39,22 @@ fn main() {
     }
     triple(s.to_string(), p.to_string(), o.to_string());
     println!("{} {} {} .", s, p, o);
-
     let ld = Builder::new()
         .link(s, Some(s))
         .link(p, Some(p))
-        .link(o, Some(o))
+        .link(o.clone(), Some(o))
         .line();
-
     println!("{}", &ld);
+
+    {
+        let p = format!("{NS_FOAF}name");
+        let o = "Alessandro Adamou";
+        println!("{} {} {} .", s, p, o);
+        let ld = Builder::new()
+            .link(s, Some(s))
+            .link(p.clone(), Some(p))
+            .link(o.clone(), Some(o))
+            .line();
+        println!("{}", &ld);
+    }
 }
