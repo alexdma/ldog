@@ -7,8 +7,20 @@ use log::info;
 const NS_FOAF: &str = "http://xmlns.com/foaf/0.1/";
 const NS_RDF: &str = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
-fn triple(s: String, p: String, o: String) {
-    (s, p, o);
+fn stmt(s: String, p: String, o: String) -> (String, String, String) {
+    (s, p, o)
+}
+
+fn to_gemtext( triples: &[(String, String, String)] ) {
+    let gemtext = Builder::new();
+    for (s, p, o) in triples.iter() {
+        gemtext.clone()
+            .link(s.clone(), Some(s))
+            .link(p.clone(), Some(p))
+            .link(o.clone(), Some(o))
+            .line();
+    }
+    gemtext
 }
 
 fn client(uri: &str) {
@@ -37,8 +49,9 @@ fn main() {
         Ordering::Greater => println!("[FAILURE] Not an rdf:type"),
         Ordering::Equal => println!("[SUCCESS] This is an rdf:type expression!"),
     }
-    triple(s.to_string(), p.to_string(), o.to_string());
     println!("{} {} {} .", s, p, o);
+    stmt(String::from(s),String::from(p),o.clone());
+
     let ld = Builder::new()
         .link(s, Some(s))
         .link(p, Some(p))

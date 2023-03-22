@@ -9,5 +9,6 @@ Particularly, I want to explore:
 
 * A convenient way of rendering Linked Data as Gemtext, or annotationg any Gemtext as you would RDFa or Microdata.
 * Using `gemini://` URIs for identifying things, and their relation to `http://` URI.
+* Bridging between the two protocols: should dereferencing `gemini://` deliver RDF formatted using `gemini://` URIs or make the leap to `http://`?
 * Gemini protocol bindings for Linked Data platforms, knowing there are no POST, PUT etc. request types and implementing a REST interface can be a daunting task.
 
