@@ -11,7 +11,8 @@ fn stmt(s: String, p: String, o: String) -> (String, String, String) {
     (s, p, o)
 }
 
-fn to_gemtext( triples: &[(String, String, String)] ) {
+// Doesn't seem to do anything, why? A reference / call-by-value problem?
+fn to_gemtext( triples: Vec<(String, String, String)> ) -> gemini::Builder {
     let gemtext = Builder::new();
     for (s, p, o) in triples.iter() {
         gemtext.clone()
@@ -20,6 +21,7 @@ fn to_gemtext( triples: &[(String, String, String)] ) {
             .link(o.clone(), Some(o))
             .line();
     }
+    println!("{}",gemtext);
     gemtext
 }
 
@@ -52,6 +54,10 @@ fn main() {
     println!("{} {} {} .", s, p, o);
     stmt(String::from(s),String::from(p),o.clone());
 
+    let mut vec = Vec::<(String, String, String)>::new();
+    vec.push(stmt(String::from(s),String::from(p),o.clone()));
+    println!("{}",to_gemtext(vec));
+    
     let ld = Builder::new()
         .link(s, Some(s))
         .link(p, Some(p))
