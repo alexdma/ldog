@@ -66,7 +66,9 @@ fn main() {
     //vec.push(stmt(String::from(s), String::from(p), o.clone()));
     let rdf = Document::new();
     rdf.add( stmt(  String::from(s), String::from(p), o.clone()) );
-    println!("{}", to_gemtext(rdf));
+    
+    // REINSTATE
+    //println!("{}", to_gemtext(rdf));
 
     let ld = Builder::new()
         .link(s, Some(s))
