@@ -4,24 +4,32 @@ use gemini::gemtext::Builder;
 use gemini::request::{Gemini, Request};
 use log::info;
 
+use gtld::{Document, Statement};
+mod gtld;
+
 const NS_FOAF: &str = "http://xmlns.com/foaf/0.1/";
 const NS_RDF: &str = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
-fn stmt(s: String, p: String, o: String) -> (String, String, String) {
-    (s, p, o)
+fn stmt(s: String, p: String, o: String) -> Statement {
+    let triple = Statement::new(s, p, o);
+    triple
 }
 
 // Doesn't seem to do anything, why? A reference / call-by-value problem?
-fn to_gemtext( triples: Vec<(String, String, String)> ) -> gemini::Builder {
+fn to_gemtext(triples: Document) -> gemini::Builder {
     let gemtext = Builder::new();
-    for (s, p, o) in triples.iter() {
-        gemtext.clone()
-            .link(s.clone(), Some(s))
-            .link(p.clone(), Some(p))
-            .link(o.clone(), Some(o))
+    for stmt in triples.statements.iter() {
+        let s = &stmt.subject;
+        let p = &stmt.predicate;
+        let o = &stmt.object;
+        gemtext
+            .clone()
+            .link(&*s, Some(s))
+            .link(&*p, Some(p))
+            .link(&*p, Some(o))
             .line();
     }
-    println!("{}",gemtext);
+    println!("{}", gemtext);
     gemtext
 }
 
@@ -46,18 +54,20 @@ fn main() {
     let p = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
     let o = NS_FOAF.to_owned() + "Person";
 
+    println!("{} {} {} .", s, p, o);
     match p.cmp(&rdftype) {
         Ordering::Less => println!("[FAILURE] Not an rdf:type"),
         Ordering::Greater => println!("[FAILURE] Not an rdf:type"),
         Ordering::Equal => println!("[SUCCESS] This is an rdf:type expression!"),
     }
-    println!("{} {} {} .", s, p, o);
-    stmt(String::from(s),String::from(p),o.clone());
+    stmt(String::from(s), String::from(p), o.clone());
 
-    let mut vec = Vec::<(String, String, String)>::new();
-    vec.push(stmt(String::from(s),String::from(p),o.clone()));
-    println!("{}",to_gemtext(vec));
-    
+    //let mut vec = Vec::<Statement>::new();
+    //vec.push(stmt(String::from(s), String::from(p), o.clone()));
+    let rdf = Document::new();
+    rdf.add( stmt(  String::from(s), String::from(p), o.clone()) );
+    println!("{}", to_gemtext(rdf));
+
     let ld = Builder::new()
         .link(s, Some(s))
         .link(p, Some(p))
