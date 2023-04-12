@@ -20,10 +20,13 @@ impl Statement {
 
 impl Document {
     pub fn new() -> Document {
-        Document { statements: Vec::<Statement>::new() }
+        Document {
+            statements: Vec::<Statement>::new(),
+        }
     }
-    
-    pub fn add(mut self, s: Statement) {
+
+    pub fn add(mut self, s: Statement) -> Document  {
         self.statements.push(s);
+        self
     }
 }

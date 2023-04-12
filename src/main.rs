@@ -1,11 +1,10 @@
-use std::cmp::Ordering;
+mod gtld;
 
 use gemini::gemtext::Builder;
 use gemini::request::{Gemini, Request};
-use log::info;
-
 use gtld::{Document, Statement};
-mod gtld;
+use log::info;
+use std::cmp::Ordering;
 
 const NS_FOAF: &str = "http://xmlns.com/foaf/0.1/";
 const NS_RDF: &str = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -26,7 +25,7 @@ fn to_gemtext(triples: Document) -> gemini::Builder {
             .clone()
             .link(&*s, Some(s))
             .link(&*p, Some(p))
-            .link(&*p, Some(o))
+            .link(&*o, Some(o))
             .line();
     }
     println!("{}", gemtext);
@@ -36,6 +35,11 @@ fn to_gemtext(triples: Document) -> gemini::Builder {
 fn client(uri: &str) {
     let req = Request::<Gemini>::from_uri(uri).expect("Could not get a Gemini request!");
     println!("Is {} a Gemini request? {}", uri, req.is_gemini_request());
+    assert!(req.is_gemini_request());
+}
+
+fn _print_type_of<T>(_: &T) {
+    println!("{}", std::any::type_name::<T>())
 }
 
 fn main() {
@@ -53,6 +57,8 @@ fn main() {
     let s = "https://orcid.org/0000-0002-9272-908X";
     let p = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
     let o = NS_FOAF.to_owned() + "Person";
+    _print_type_of(&s);
+    _print_type_of(&o);
 
     println!("{} {} {} .", s, p, o);
     match p.cmp(&rdftype) {
@@ -64,11 +70,11 @@ fn main() {
 
     //let mut vec = Vec::<Statement>::new();
     //vec.push(stmt(String::from(s), String::from(p), o.clone()));
-    let rdf = Document::new();
-    rdf.add( stmt(  String::from(s), String::from(p), o.clone()) );
-    
-    // REINSTATE
-    //println!("{}", to_gemtext(rdf));
+    let mut rdf = Document::new();
+    rdf = rdf.add(stmt(String::from(s), String::from(p), o.clone()));
+
+    // PRINTS NOTHING
+    println!("{}", to_gemtext(rdf));
 
     let ld = Builder::new()
         .link(s, Some(s))
