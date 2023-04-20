@@ -35,7 +35,7 @@ impl Document {
         self
     }
 
-    pub fn len(&mut self) -> usize {
+    pub fn len(&self) -> usize {
         self.statements.len()
     }
 
