@@ -1,3 +1,5 @@
+use gemini::gemtext::Builder;
+
 pub struct Statement {
     pub subject: String,
     pub predicate: String,
@@ -18,6 +20,9 @@ impl Statement {
     }
 }
 
+/*
+ * A collection of RDF statements, order unimportant
+ */
 impl Document {
     pub fn new() -> Document {
         Document {
@@ -25,8 +30,26 @@ impl Document {
         }
     }
 
-    pub fn add(mut self, s: Statement) -> Document  {
+    pub fn add(&mut self, s: Statement) -> &Self  {
         self.statements.push(s);
         self
+    }
+    
+    pub fn len(&mut self) -> usize {
+        self.statements.len()
+    }
+    
+    pub fn to_gemtext(&mut self) -> gemini::Builder {
+        let mut gemtext = Builder::new();
+        for stmt in self.statements.iter() {
+            let s = &stmt.subject;
+            let p = &stmt.predicate;
+            let o = &stmt.object;
+            gemtext = gemtext.link(s, Some(s))
+                .link(p, Some(p))
+                .link(o, Some(o))
+                .line();
+        }
+        gemtext
     }
 }
