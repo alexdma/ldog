@@ -30,22 +30,23 @@ impl Document {
         }
     }
 
-    pub fn add(&mut self, s: Statement) -> &Self  {
+    pub fn add(&mut self, s: Statement) -> &Self {
         self.statements.push(s);
         self
     }
-    
+
     pub fn len(&mut self) -> usize {
         self.statements.len()
     }
-    
+
     pub fn to_gemtext(&mut self) -> gemini::Builder {
         let mut gemtext = Builder::new();
         for stmt in self.statements.iter() {
             let s = &stmt.subject;
             let p = &stmt.predicate;
             let o = &stmt.object;
-            gemtext = gemtext.link(s, Some(s))
+            gemtext = gemtext
+                .link(s, Some(s))
                 .link(p, Some(p))
                 .link(o, Some(o))
                 .line();

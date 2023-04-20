@@ -3,8 +3,8 @@ mod namespace;
 
 use gemini::request::{Gemini, Request};
 use gtld::{Document, Statement};
-use namespace::{NS_FOAF, NS_RDF};
 use log::info;
+use namespace::{NS_FOAF, NS_RDF};
 use std::cmp::Ordering;
 
 fn stmt(s: String, p: String, o: String) -> Statement {
@@ -48,7 +48,11 @@ fn main() {
     }
     let mut rdf = Document::new();
     rdf.add(stmt(String::from(s), String::from(p), o.clone()));
-    rdf.add(stmt(String::from(s), format!("{NS_FOAF}name"), String::from("Alessandro Adamou")));
+    rdf.add(stmt(
+        String::from(s),
+        format!("{NS_FOAF}name"),
+        String::from("Alessandro Adamou"),
+    ));
 
     println!("Printing an RDF document of {} statements...", rdf.len());
     println!();
