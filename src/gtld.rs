@@ -1,5 +1,6 @@
 use gemini::gemtext::Builder;
 
+#[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Statement {
     pub subject: String,
     pub predicate: String,
@@ -20,9 +21,7 @@ impl Statement {
     }
 }
 
-/*
- * A collection of RDF statements, order unimportant
- */
+/// A collection of RDF statements, order unimportant.
 impl Document {
     pub fn new() -> Document {
         Document {
@@ -39,6 +38,7 @@ impl Document {
         self.statements.len()
     }
 
+    /// Exports to a representation of the RDF in gemtext.
     pub fn to_gemtext(&mut self) -> gemini::Builder {
         let mut gemtext = Builder::new();
         for stmt in self.statements.iter() {
@@ -53,4 +53,18 @@ impl Document {
         }
         gemtext
     }
+}
+
+use crate::namespace::{NS_FRBR, NS_RDF, NS_WIKIDATA};
+#[test]
+fn test_gemtext_object_property_assertion() {
+    let stmt = Statement::new(
+        format!("{NS_WIKIDATA}Q2026413"),
+        format!("{NS_RDF}type"),
+        format!("{NS_FRBR}Work"),
+    );
+    let mut rdf = Document::new();
+    rdf.add(stmt.clone());
+    assert_eq!(rdf.len(), 1);
+    assert_eq!(rdf.statements[0], stmt);
 }

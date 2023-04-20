@@ -1,3 +1,10 @@
+/*!
+ * __This code will evolve into a software library.__
+ *
+ * The main method is primarily for demo/showcase, and for testing before I find out
+ * how tests are done in Rust :)
+ */
+
 mod gtld;
 mod namespace;
 
