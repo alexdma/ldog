@@ -1,5 +1,9 @@
+/**
+ * Toolkit for representing Linked Data as Gemtext.
+ */
 use gemini::gemtext::Builder;
 
+/// A statement is a representation of an RDF triple: subject, predicate, object.
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Statement {
     pub subject: String,
@@ -7,12 +11,19 @@ pub struct Statement {
     pub object: String,
 }
 
+/// A collection of statements. The order is assumed to be unimportant.
 pub struct Document {
     pub statements: Vec<Statement>,
 }
 
 impl Statement {
-    pub fn new(s: String, p: String, o: String) -> Statement {
+    pub fn new(
+        s: String,
+        p: String,
+        o: String,
+        s_label: Option<String>,
+        o_label: Option<String>,
+    ) -> Statement {
         Statement {
             subject: s,
             predicate: p,
@@ -21,7 +32,6 @@ impl Statement {
     }
 }
 
-/// A collection of RDF statements, order unimportant.
 impl Document {
     pub fn new() -> Document {
         Document {
@@ -46,22 +56,24 @@ impl Document {
             let p = &stmt.predicate;
             let o = &stmt.object;
             gemtext = gemtext
-                .link(s, Some(s))
-                .link(p, Some(p))
-                .link(o, Some(o))
+                .link(s, None::<String>)
+                .link(p, None::<String>)
+                .link(o, None::<String>)
                 .line();
         }
         gemtext
     }
 }
 
-use crate::namespace::{NS_FRBR, NS_RDF, NS_WIKIDATA};
 #[test]
 fn test_gemtext_object_property_assertion() {
+    use crate::namespace::{NS_FRBR, NS_RDF, NS_WIKIDATA};
     let stmt = Statement::new(
         format!("{NS_WIKIDATA}Q2026413"),
         format!("{NS_RDF}type"),
         format!("{NS_FRBR}Work"),
+        None,
+        None,
     );
     let mut rdf = Document::new();
     rdf.add(stmt.clone());
