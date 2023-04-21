@@ -13,7 +13,6 @@ use gtld::{Document, Statement};
 use log::info;
 use namespace::{NS_FOAF, NS_ORCID, NS_RDF};
 use std::cmp::Ordering;
-use util::to_gemini_uri;
 
 fn stmt(s: String, p: String, o: String) -> Statement {
     let triple = Statement::new(s, p, o, None, None);
