@@ -13,6 +13,7 @@ use gtld::{Document, Statement};
 use log::info;
 use namespace::{NS_FOAF, NS_ORCID, NS_RDF};
 use std::cmp::Ordering;
+use std::env;
 
 fn stmt(s: String, p: String, o: String) -> Statement {
     let triple = Statement::new(s, p, o, None, None);
@@ -23,8 +24,39 @@ fn _print_type_of<T>(_: &T) {
     println!("{}", std::any::type_name::<T>());
 }
 
+fn help(progname: &String, valid: &Vec<String>) {
+    println!("Usage: {} <task>", progname);
+    println!("<task> can be one of:");
+    for (index, arg) in valid.iter().enumerate() {
+      println!(" - {}", arg);
+    }
+}
+
 fn main() {
+    
     println!("Welcome to my Rust project bringing Linked Data over to the Small Web!");
+    let tasks = vec![String::from("triple"), String::from("graph"), String::from("gemtext")];
+    
+    // Get the command-line arguments
+    let args: Vec<String> = env::args().collect();
+    println!("Now running program: {}", args[0]);
+    if args.len() < 2 {
+        help(&args[0], &tasks);
+        return;
+    }
+    let arg1 = &args[1];
+    if arg1.is_empty() {
+        println!("arg1 cannot be empty");
+                help(&args[0], &tasks);
+        return;
+    } else if tasks.contains(&arg1) {
+        println!("arg1 is valid: {}", arg1);
+    } else {
+        println!("arg1 is not valid");
+        help(&args[0], &tasks);
+        return;
+    }
+    
 
     // Won't work until I configure a logger.
     info!("1. Create a sample statement.");
@@ -51,6 +83,7 @@ fn main() {
         format!("{NS_FOAF}name"),
         String::from("Alessandro Adamou"),
     ));
+    
 
     info!("4. Convert to Gemtext and print.");
     println!("Printing an RDF document of {} statements...", rdf.len());
